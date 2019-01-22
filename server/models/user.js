@@ -55,7 +55,7 @@ UserSchema.methods.generateAuthToken = function () {
 	});
 };
 
-// find an user by token on /users/me/x-auth
+// finds an user by token on /users/me/x-auth
 UserSchema.statics.findByToken = function (token) {
 	var User = this;
 	var decoded;
@@ -75,6 +75,29 @@ UserSchema.statics.findByToken = function (token) {
 		'tokens.access': 'auth'
 	});
 }
+
+// used to login, checks email and password
+UserSchema.statics.findByCredentials = function (email, password) {
+	var User = this;
+
+	// checks if the email is in the user collection
+	return User.findOne({email}).then((user) => {
+		if (!user) {
+			return Promise.reject();
+		}
+
+		return new Promise((resolve, reject) => {
+			// compare the password and it's token
+			bcrypt.compare(password, user.password, (err, res) => {
+				if (res) {
+					resolve(user);
+				} else {
+					reject();
+				}
+			});
+		});
+	});
+};
 
 // mongoose middleware... checks if the password is correct before storing the user to the database
 UserSchema.pre('save', function (next) {
