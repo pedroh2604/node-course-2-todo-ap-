@@ -148,6 +148,15 @@ app.post('/users/login', (req, res) => {
 	});	
 });
 
+// logs off an user, deleting its toke
+app.delete('/users/me/token', authenticate, (req, res) => {
+	req.user.removeToken(req.token).then(() => {
+		res.status(200).send();
+	}, () => {
+		res.status(400).send();
+	});
+});
+
 // stablishes the port the server will be up at
 app.listen(port, () => {
 	console.log(`Started up at port ${port}`);

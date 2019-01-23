@@ -55,6 +55,18 @@ UserSchema.methods.generateAuthToken = function () {
 	});
 };
 
+// removes the generator token from the UserSchema object
+UserSchema.methods.removeToken = function (token) {
+	var user = this;
+
+	// if the token matches one in the array of tokens, removes it
+	return user.update({
+		$pull: {
+			tokens: {token}
+		}
+	});
+};
+
 // finds an user by token on /users/me/x-auth
 UserSchema.statics.findByToken = function (token) {
 	var User = this;
